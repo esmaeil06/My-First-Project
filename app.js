@@ -3,7 +3,7 @@ const products = [
 	{ id: 1, title: 'Cozy Mug', price: 12.99, img: 'https://picsum.photos/seed/mug/400/300', desc: 'A warm mug for your coffee.' },
 	{ id: 2, title: 'Comfort Tee', price: 19.5, img: 'https://picsum.photos/seed/tee/400/300', desc: 'Soft cotton tee.' },
 	{ id: 3, title: 'Notebook', price: 8.25, img: 'https://picsum.photos/seed/notebook/400/300', desc: 'Handy notebook for ideas.' },
-	{ id: 4, title: 'Desk Plant', price: 14.0, img: 'https://picsum.photos/seed/plant/400/300', desc: 'Low-maintenance desk plant.' }
+	{ id: 4,    title: 'Desk Plant', price: 14.0, img: 'https://picsum.photos/seed/plant/400/300', desc: 'Low-maintenance desk plant.' }
 ];
 
 let cart = JSON.parse(localStorage.getItem('mini_cart') || '[]');
