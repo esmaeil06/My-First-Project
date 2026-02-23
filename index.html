@@ -1,20 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
-
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Mini Shop</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <h1>meaw v1
-        and some v2
-        how to go to my home this is how to get moere mony do u ned more ore not 
-        
-    
-    </h1>
-    <h2>Dania is not good hahahahaha</h2>
+    <header class="site-header">
+        <div class="container">
+            <div class="logo">Mini Shop</div>
+            <div class="search">
+                <input id="search" type="search" placeholder="Search products..." />
+            </div>
+            <button id="cartBtn" class="cart-btn">Cart (<span id="cart-count">0</span>)</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="products" class="products-grid" aria-label="Products"></section>
+    </main>
+
+    <aside id="cart" class="cart-drawer hidden" aria-hidden="true">
+        <button id="closeCart" class="close-cart" aria-label="Close cart">×</button>
+        <h2>Your Cart</h2>
+        <ul id="cart-items" class="cart-items"></ul>
+        <div class="cart-footer">
+            <div>Total: <strong id="cart-total">$0.00</strong></div>
+            <button id="checkout" class="btn primary">Checkout</button>
+        </div>
+    </aside>
+
     <script src="app.js"></script>
 </body>
 </html>
