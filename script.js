@@ -4,7 +4,6 @@ const themeSelect = document.getElementById('themeSelect');
 const notesArea = document.getElementById('myNotes');
 const colors = ['#3b82f6', '#10b981', '#ef4444', '#f59e0b', '#8b5cf6', '#ec4899', '#64748b'];
 
-// نظام الإشعارات (Toast)
 function showToast(message) {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
@@ -38,13 +37,13 @@ window.onload = function() {
     themeSelect.value = savedTheme;
 
     highlightToday();
-    setupDragAndDrop(); // تفعيل السحب والإفلات
+    setupDragAndDrop(); 
 };
 
 function saveTitle() { localStorage.setItem('proAppTitle', mainTitle.innerHTML); }
 function saveData() { 
     localStorage.setItem('proAppTable', tableBody.innerHTML);
-    setupDragAndDrop(); // إعادة ربط الأحداث بعد أي تعديل
+    setupDragAndDrop(); 
 }
 function saveNotes() { localStorage.setItem('proAppNotes', notesArea.value); }
 
@@ -68,8 +67,10 @@ function removeCard(btn) {
     let td = btn.closest('td');
     let colClass = Array.from(td.classList).find(c => c.startsWith('col-')) || '';
     let todayClass = td.classList.contains('today-col') ? ' today-col' : '';
+    let dataLabel = td.getAttribute('data-label') || '';
+    
     td.className = `${colClass} ${todayClass} drop-zone`;
-    td.innerHTML = '<div class="empty-slot" onclick="addCard(this)"></div>';
+    td.innerHTML = `<div class="empty-slot" onclick="addCard(this)"></div>`;
     saveData();
     showToast('تم حذف المادة 🗑️');
 }
@@ -93,11 +94,11 @@ function addTimeRow(position) {
     const tr = document.createElement('tr');
     tr.innerHTML = `
         <td class="time-col" contenteditable="true" oninput="saveData()">00:00<br>00:00</td>
-        <td class="col-1 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-        <td class="col-2 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-        <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-        <td class="col-4 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-        <td class="col-5 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+        <td class="col-1 drop-zone" data-label="الإثنين"><div class="empty-slot" onclick="addCard(this)"></div></td>
+        <td class="col-2 drop-zone" data-label="الثلاثاء"><div class="empty-slot" onclick="addCard(this)"></div></td>
+        <td class="col-3 drop-zone" data-label="الأربعاء"><div class="empty-slot" onclick="addCard(this)"></div></td>
+        <td class="col-4 drop-zone" data-label="الخميس"><div class="empty-slot" onclick="addCard(this)"></div></td>
+        <td class="col-5 drop-zone" data-label="الجمعة"><div class="empty-slot" onclick="addCard(this)"></div></td>
     `;
     if (position === 'top') { tableBody.insertBefore(tr, tableBody.firstChild); } 
     else { tableBody.appendChild(tr); }
@@ -137,9 +138,7 @@ function clearData() {
     }
 }
 
-// ---------------------------------------------------------
 // ميزة السحب والإفلات (Drag and Drop)
-// ---------------------------------------------------------
 let draggedCard = null;
 let sourceZone = null;
 
@@ -163,7 +162,7 @@ function setupDragAndDrop() {
 
     dropZones.forEach(zone => {
         zone.addEventListener('dragover', function(e) {
-            e.preventDefault(); // ضروري للسماح بالإفلات
+            e.preventDefault(); 
             this.classList.add('drag-over');
         });
 
@@ -176,18 +175,15 @@ function setupDragAndDrop() {
             this.classList.remove('drag-over');
 
             if (draggedCard && this !== sourceZone) {
-                // إذا تم الإفلات في مكان فارغ
                 if (this.querySelector('.empty-slot')) {
-                    this.innerHTML = ''; // مسح الفراغ
-                    this.appendChild(draggedCard); // نقل البطاقة
-                    // إعادة الفراغ للمكان القديم
+                    this.innerHTML = ''; 
+                    this.appendChild(draggedCard); 
                     sourceZone.innerHTML = '<div class="empty-slot" onclick="addCard(this)"></div>';
                 } 
-                // إذا تم الإفلات فوق مادة أخرى (تبديل المواقع)
                 else if (this.querySelector('.class-card')) {
                     const existingCard = this.querySelector('.class-card');
-                    sourceZone.appendChild(existingCard); // نقل القديم لمكان المسحوب
-                    this.appendChild(draggedCard); // وضع المسحوب في المكان الجديد
+                    sourceZone.appendChild(existingCard); 
+                    this.appendChild(draggedCard); 
                 }
                 saveData();
                 showToast('تم نقل المادة بنجاح 🔄');
