@@ -104,3 +104,115 @@ th.today-col { color: #3b82f6; font-weight: bold; border-bottom: 2px solid #3b82
 
 button.reset { margin-top: 20px; padding: 10px 20px; background: transparent; color: #ef4444; border: 1px dashed #ef4444; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
 button.reset:hover { background: rgba(239, 68, 68, 0.1); }
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    .header-container {
+        margin-bottom: 5px;
+    }
+    
+    h1 {
+        font-size: 20px;
+        padding: 5px 10px;
+    }
+    
+    .controls-row {
+        flex-direction: column;
+        gap: 5px;
+        margin-bottom: 10px;
+    }
+    
+    .theme-selector {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+    
+    .action-btn {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+    
+    .add-row-btn {
+        padding: 8px;
+        font-size: 13px;
+        margin: 5px 0;
+    }
+    
+    .table-wrapper {
+        padding: 10px;
+        border-radius: 12px;
+    }
+    
+    table {
+        border-spacing: 5px;
+        min-width: 700px; /* Allow horizontal scroll */
+    }
+    
+    th {
+        font-size: 12px;
+        padding-bottom: 10px;
+    }
+    
+    td {
+        border-radius: 6px;
+    }
+    
+    .time-col {
+        width: 12%;
+        font-size: 11px;
+        padding-right: 8px;
+    }
+    
+    .class-card {
+        min-height: 60px;
+        padding: 8px;
+        border-radius: 8px;
+    }
+    
+    .class-title {
+        font-size: 13px;
+    }
+    
+    .class-info {
+        font-size: 11px;
+    }
+    
+    .empty-slot {
+        min-height: 60px;
+    }
+    
+    .empty-slot::after {
+        font-size: 12px;
+    }
+    
+    .pause-divider {
+        font-size: 10px;
+    }
+    
+    .lunch-break {
+        height: 30px;
+    }
+    
+    .notes-section {
+        padding: 15px;
+        margin-top: 15px;
+    }
+    
+    .notes-section h3 {
+        font-size: 14px;
+    }
+    
+    .notes-area {
+        font-size: 13px;
+        min-height: 80px;
+    }
+    
+    button.reset {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+}
