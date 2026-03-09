@@ -3,40 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Stundenplan Pro - Untis Style</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
+    <title>Stundenplan - Untis Mobile View</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://bernardo-castilho.github.io/DragDropTouch/DragDropTouch.js"></script>
+    
+    <style>
+        :root {
+            --bg-color: #0f172a; --card-bg: rgba(30, 41, 59, 0.85); --card-hover: rgba(51, 65, 85, 0.95);
+            --text-main: #f8fafc; --text-sub: #94a3b8; --border-color: #334155;
+            --current-day-bg: rgba(59, 130, 246, 0.08);
+        }
+        [data-theme="light"] {
+            --bg-color: #f8fafc; --card-bg: rgba(255, 255, 255, 0.9); --card-hover: #ffffff;
+            --text-main: #1e293b; --text-sub: #64748b; --border-color: #cbd5e1;
+            --current-day-bg: rgba(59, 130, 246, 0.08);
+        }
+        [data-theme="cyber"] {
+            --bg-color: #000000; --card-bg: #111111; --card-hover: #222222;
+            --text-main: #00ffcc; --text-sub: #ff00ff; --border-color: #333333;
+            --current-day-bg: rgba(0, 255, 204, 0.1);
+        }
+
+        body { font-family: system-ui, sans-serif; background: var(--bg-color); color: var(--text-main); margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; transition: 0.3s; }
+        * { box-sizing: border-box; }
+
+        .header-container { text-align: center; width: 100%; max-width: 1200px; margin-bottom: 15px; }
+        h1 { font-size: 20px; margin: 0 0 10px 0; padding: 5px; color: #3b82f6; border: 1px dashed transparent; }
+        h1[contenteditable="true"]:focus { outline: none; border-color: var(--text-main); }
+
+        .controls-row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+        .theme-selector, .action-btn { background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+        .action-btn { background: #3b82f6; color: white; border: none; font-weight: bold; }
+
+        /* --- السر هنا: منع السحب الجانبي وجعل الجدول يناسب الشاشة --- */
+        .table-wrapper { 
+            width: 100%; 
+            max-width: 1200px; 
+            overflow: hidden; /* منع السحب الجانبي تماماً */
+            background: transparent;
+        }
+
+        table { 
+            width: 100%; 
+            table-layout: fixed; /* إجبار الأعمدة على التساوي وعدم تجاوز الشاشة */
+            border-collapse: separate; 
+            border-spacing: 2px; /* مسافات ضيقة مثل Untis */
+        }
+
+        th { font-size: 11px; padding-bottom: 5px; border-bottom: 2px solid var(--border-color); color: var(--text-sub); font-weight: bold; word-wrap: break-word;}
+        td { vertical-align: top; }
+
+        /* عمود الوقت ثابت وصغير */
+        .time-col { width: 40px; text-align: center; color: var(--text-sub); font-size: 10px; font-weight: bold; border-right: 1px dashed var(--border-color); vertical-align: middle; padding: 0;}
+        .time-col-header { width: 40px; }
+
+        .today-col { background-color: var(--current-day-bg); border-radius: 4px; }
+        th.today-col { color: #3b82f6; border-bottom-color: #3b82f6; }
+
+        /* البطاقات مصممة لتكون صغيرة ومتجاوبة */
+        .class-card { background: var(--card-bg); border-right: 3px solid #3b82f6; border-radius: 6px; padding: 4px; min-height: 50px; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; cursor: grab; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .class-card[contenteditable="true"]:focus { outline: 1px solid #3b82f6; }
+        
+        .class-title { font-weight: bold; font-size: 11px; color: var(--text-main); width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .class-info { font-size: 9px; color: var(--text-sub); width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* أزرار التحكم داخل البطاقة (تظهر عند اللمس) */
+        .card-controls { position: absolute; top: -5px; right: -5px; display: flex; flex-direction: column; gap: 2px; opacity: 0; transition: 0.2s; z-index: 10;}
+        .class-card:hover .card-controls, .class-card:active .card-controls { opacity: 1; }
+        .color-btn, .delete-btn { width: 18px; height: 18px; border-radius: 50%; border: none; font-size: 9px; background: #444; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;}
+        .delete-btn { background: #ef4444; }
+
+        .empty-slot { min-height: 50px; border-radius: 6px; border: 1px dashed var(--border-color); display: flex; align-items: center; justify-content: center; cursor: pointer; color: transparent; font-size: 18px; }
+        .empty-slot:active { background: var(--current-day-bg); color: #3b82f6; }
+        .empty-slot::after { content: "+"; color: var(--border-color); font-size: 14px; font-weight: bold; }
+
+        .add-row-btn, .reset { width: 100%; padding: 10px; margin-top: 10px; background: transparent; color: var(--text-sub); border: 1px dashed var(--border-color); border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .reset { color: #ef4444; border-color: #ef4444; }
+
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #3b82f6; color: white; padding: 10px 20px; border-radius: 20px; font-size: 12px; font-weight: bold; z-index: 9999; display: none; }
+        
+        /* تخصيص دقيق للهواتف (تصغير الخطوط أكثر) */
+        @media screen and (max-width: 400px) {
+            .class-title { font-size: 9px; }
+            .class-info { font-size: 8px; }
+            .time-col { font-size: 9px; width: 35px; }
+            .time-col-header { width: 35px; }
+            th { font-size: 10px; }
+        }
+    </style>
 </head>
 <body>
 
-    <div id="toastContainer" class="toast-container"></div>
+    <div id="toast" class="toast"></div>
 
     <div class="header-container">
-        <h1 id="mainTitle" contenteditable="true" oninput="saveTitle()">🎓 جدول السمستر 2 - ميكاترونكس</h1>
-        
+        <h1 id="mainTitle" contenteditable="true" oninput="saveData()">الجدول الدراسي (Untis Style)</h1>
         <div class="controls-row">
-            <button class="action-btn" id="captureBtn" onclick="exportToImage()">📸 حفظ كصورة</button>
+            <button class="action-btn" onclick="exportToImage()">📸 تصوير الجدول</button>
             <select class="theme-selector" id="themeSelect" onchange="changeTheme()">
-                <option value="dark">🌙 الوضع الداكن</option>
-                <option value="light">☀️ الوضع الفاتح</option>
-                <option value="cyber">💻 وضع السايبر</option>
+                <option value="dark">الداكن</option>
+                <option value="light">الفاتح</option>
+                <option value="cyber">السايبر</option>
             </select>
         </div>
     </div>
-
-    <button class="add-row-btn" onclick="addTimeRow('top')">➕ أضف وقت جديد أعلى الجدول</button>
 
     <div class="table-wrapper" id="captureArea">
         <table id="scheduleTable">
             <thead>
                 <tr>
                     <th class="time-col-header">الوقت</th>
-                    <th id="th-1">Mo.<br>الإثنين</th>
-                    <th id="th-2">Di.<br>الثلاثاء</th>
-                    <th id="th-3">Mi.<br>الأربعاء</th>
-                    <th id="th-4">Do.<br>الخميس</th>
-                    <th id="th-5">Fr.<br>الجمعة</th>
+                    <th id="th-1">Mo</th>
+                    <th id="th-2">Di</th>
+                    <th id="th-3">Mi</th>
+                    <th id="th-4">Do</th>
+                    <th id="th-5">Fr</th>
                 </tr>
             </thead>
             <tbody id="tableBody">
@@ -46,151 +127,202 @@
                     <td class="col-2 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
                     <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
                     <td class="col-4 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-5 drop-zone">
-                        <div class="class-card" draggable="true" data-color-index="4" style="border-right-color: #8b5cf6;">
-                            <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Physik Pr.</div><div class="class-info">lux</div></div>
-                        </div>
-                    </td>
-                </tr>
-
-                <tr class="pause-row"><td class="time-col">15m</td><td colspan="5"><div class="pause-divider">☕</div></td></tr>
-
-                <tr>
-                    <td class="time-col" contenteditable="true" oninput="saveData()">09:45<br>11:15</td>
-                    <td class="col-1 drop-zone">
-                        <div class="class-card" draggable="true" data-color-index="0" style="border-right-color: #3b82f6;">
-                            <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Mathe 1</div><div class="class-info">hoefert</div></div>
-                        </div>
-                    </td>
-                    <td class="col-2 drop-zone">
-                        <div class="class-card" draggable="true" data-color-index="4" style="border-right-color: #8b5cf6;">
-                            <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Physik</div><div class="class-info">lux</div></div>
-                        </div>
-                    </td>
-                    <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-4 drop-zone">
-                        <div class="class-card" draggable="true" data-color-index="2" style="border-right-color: #ef4444;">
-                            <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Maschinenbau</div><div class="class-info">reibetan</div></div>
-                        </div>
-                    </td>
-                    <td class="col-5 drop-zone">
-                        <div class="class-card" draggable="true" data-color-index="4" style="border-right-color: #8b5cf6;">
-                            <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Physik Pr.</div><div class="class-info">lux</div></div>
-                        </div>
-                    </td>
-                </tr>
-
-                <tr class="pause-row"><td class="time-col">15m</td><td colspan="5"><div class="pause-divider">☕</div></td></tr>
-
-                <tr>
-                    <td class="time-col" contenteditable="true" oninput="saveData()">11:30<br>13:00</td>
-                    <td class="col-1 drop-zone">
-                        <div class="class-card" draggable="true" data-color-index="4" style="border-right-color: #8b5cf6;">
-                            <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Physik</div><div class="class-info">raudzis</div></div>
-                        </div>
-                    </td>
-                    <td class="col-2 drop-zone">
-                        <div class="class-card" draggable="true" data-color-index="4" style="border-right-color: #8b5cf6;">
-                            <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Physik</div><div class="class-info">raudzis</div></div>
-                        </div>
-                    </td>
-                    <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-4 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-5 drop-zone">
-                        <div class="class-card" draggable="true" data-color-index="1" style="border-right-color: #10b981;">
-                            <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">CAD</div><div class="class-info">busch</div></div>
-                        </div>
-                    </td>
-                </tr>
-
-                <tr class="pause-row"><td class="time-col">45m</td><td colspan="5"><div class="pause-divider lunch-break">🍽️</div></td></tr>
-
-                <tr>
-                    <td class="time-col" contenteditable="true" oninput="saveData()">13:45<br>15:15</td>
-                    <td class="col-1 drop-zone">
-                        <div class="class-card" draggable="true" data-color-index="2" style="border-right-color: #ef4444;">
-                            <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Werkstoff.</div><div class="class-info">laepple</div></div>
-                        </div>
-                    </td>
-                    <td class="col-2 drop-zone">
-                        <div class="class-card" draggable="true" data-color-index="0" style="border-right-color: #3b82f6;">
-                            <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Mathe 1</div><div class="class-info">hoefert</div></div>
-                        </div>
-                    </td>
-                    <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-4 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-5 drop-zone">
-                        <div class="class-card" draggable="true" data-color-index="1" style="border-right-color: #10b981;">
-                            <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">CAD</div><div class="class-info">busch</div></div>
-                        </div>
-                    </td>
-                </tr>
-
-                <tr class="pause-row"><td class="time-col">15m</td><td colspan="5"><div class="pause-divider">☕</div></td></tr>
-
-                <tr>
-                    <td class="time-col" contenteditable="true" oninput="saveData()">15:30<br>17:00</td>
-                    <td class="col-1 drop-zone">
-                        <div class="class-card" draggable="true" data-color-index="0" style="border-right-color: #3b82f6;">
-                            <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Mathe Üb.</div><div class="class-info">TEC T...</div></div>
-                        </div>
-                    </td>
-                    <td class="col-2 drop-zone">
-                        <div class="class-card" draggable="true" data-color-index="0" style="border-right-color: #3b82f6;">
-                            <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Mathe 1</div><div class="class-info">hilberat</div></div>
-                        </div>
-                    </td>
-                    <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-4 drop-zone">
-                        <div class="class-card" draggable="true" data-color-index="3" style="border-right-color: #f59e0b;">
-                            <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Rechnung.</div><div class="class-info">kldora</div></div>
-                        </div>
-                    </td>
                     <td class="col-5 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
                 </tr>
 
-                <tr class="pause-row"><td class="time-col">15m</td><td colspan="5"><div class="pause-divider">☕</div></td></tr>
+                <tr>
+                    <td class="time-col" contenteditable="true" oninput="saveData()">09:45<br>11:15</td>
+                    <td class="col-1 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-2 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-4 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-5 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                </tr>
 
+                <tr>
+                    <td class="time-col" contenteditable="true" oninput="saveData()">11:30<br>13:00</td>
+                    <td class="col-1 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-2 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-4 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-5 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                </tr>
+
+                <tr>
+                    <td class="time-col" contenteditable="true" oninput="saveData()">13:45<br>15:15</td>
+                    <td class="col-1 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-2 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-4 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-5 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                </tr>
+
+                <tr>
+                    <td class="time-col" contenteditable="true" oninput="saveData()">15:30<br>17:00</td>
+                    <td class="col-1 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-2 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-4 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-5 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                </tr>
+                
                 <tr>
                     <td class="time-col" contenteditable="true" oninput="saveData()">17:15<br>18:45</td>
                     <td class="col-1 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
                     <td class="col-2 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
                     <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-4 drop-zone">
-                        <div class="class-card" draggable="true" data-color-index="3" style="border-right-color: #f59e0b;">
-                            <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Projektmgt.</div><div class="class-info">bitter</div></div>
-                        </div>
-                    </td>
+                    <td class="col-4 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
                     <td class="col-5 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
                 </tr>
+
             </tbody>
         </table>
     </div>
 
-    <button class="add-row-btn" onclick="addTimeRow('bottom')">➕ أضف وقت جديد أسفل الجدول</button>
+    <button class="add-row-btn" onclick="addTimeRow()">➕ أضف وقت إضافي</button>
+    <button class="reset" onclick="clearData()">⚠️ تفريغ الجدول بالكامل (مسح البيانات)</button>
 
-    <div class="notes-section">
-        <h3>📝 ملاحظاتي</h3>
-        <textarea id="myNotes" class="notes-area" placeholder="اكتب ملاحظاتك هنا..." oninput="saveNotes()"></textarea>
-    </div>
+    <script>
+        const tableBody = document.getElementById('tableBody');
+        const mainTitle = document.getElementById('mainTitle');
+        const themeSelect = document.getElementById('themeSelect');
+        const toast = document.getElementById('toast');
+        const colors = ['#3b82f6', '#10b981', '#ef4444', '#f59e0b', '#8b5cf6', '#ec4899', '#64748b'];
 
-    <button class="reset" onclick="clearData()">⚠️ إعادة الجدول للمصنع</button>
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 2000);
+        }
 
-    <script src="script.js"></script>
+        function highlightToday() {
+            let today = new Date().getDay(); 
+            if(today >= 1 && today <= 5) {
+                document.getElementById('th-' + today).classList.add('today-col');
+                document.querySelectorAll('.col-' + today).forEach(cell => cell.classList.add('today-col'));
+            }
+        }
+
+        window.onload = function() {
+            // حفظ نسخة فارغة للمصنع للعودة إليها
+            if(!localStorage.getItem('emptyOriginal')) { localStorage.setItem('emptyOriginal', tableBody.innerHTML); }
+            
+            if(localStorage.getItem('myUntisTable')) { tableBody.innerHTML = localStorage.getItem('myUntisTable'); }
+            if(localStorage.getItem('myUntisTitle')) { mainTitle.innerHTML = localStorage.getItem('myUntisTitle'); }
+            
+            const savedTheme = localStorage.getItem('myUntisTheme') || 'dark';
+            document.body.setAttribute('data-theme', savedTheme);
+            themeSelect.value = savedTheme;
+
+            highlightToday();
+            setupDragAndDrop();
+        };
+
+        function saveData() { 
+            localStorage.setItem('myUntisTable', tableBody.innerHTML);
+            localStorage.setItem('myUntisTitle', mainTitle.innerHTML);
+            setupDragAndDrop(); 
+        }
+
+        function changeTheme() {
+            document.body.setAttribute('data-theme', themeSelect.value);
+            localStorage.setItem('myUntisTheme', themeSelect.value);
+        }
+
+        function changeColor(btn) {
+            let card = btn.closest('.class-card');
+            let currentIndex = parseInt(card.getAttribute('data-color-index') || '0');
+            let nextIndex = (currentIndex + 1) % colors.length;
+            card.style.borderRightColor = colors[nextIndex];
+            card.setAttribute('data-color-index', nextIndex);
+            saveData();
+        }
+
+        function removeCard(btn) {
+            let td = btn.closest('td');
+            let colClass = Array.from(td.classList).find(c => c.startsWith('col-')) || '';
+            let todayClass = td.classList.contains('today-col') ? ' today-col' : '';
+            td.className = `${colClass} ${todayClass} drop-zone`;
+            td.innerHTML = `<div class="empty-slot" onclick="addCard(this)"></div>`;
+            saveData();
+        }
+
+        function addCard(slot) {
+            let td = slot.closest('td');
+            td.innerHTML = `
+                <div class="class-card" draggable="true" data-color-index="0" style="border-right-color: #3b82f6;">
+                    <div class="card-controls" contenteditable="false">
+                        <button class="color-btn" onclick="changeColor(this)">🎨</button>
+                        <button class="delete-btn" onclick="removeCard(this)">✖</button>
+                    </div>
+                    <div contenteditable="true" oninput="saveData()"><div class="class-title">المادة</div><div class="class-info">قاعة/مدرس</div></div>
+                </div>
+            `;
+            saveData();
+        }
+
+        function addTimeRow() {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="time-col" contenteditable="true" oninput="saveData()">00:00<br>00:00</td>
+                <td class="col-1 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                <td class="col-2 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                <td class="col-4 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                <td class="col-5 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+            `;
+            tableBody.appendChild(tr);
+            highlightToday();
+            saveData();
+        }
+
+        function exportToImage() {
+            showToast('جاري التقاط الصورة...');
+            html2canvas(document.getElementById('captureArea'), { 
+                backgroundColor: getComputedStyle(document.body).backgroundColor, 
+                scale: 3, // دقة عالية
+                useCORS: true 
+            }).then(canvas => {
+                let link = document.createElement('a');
+                link.download = 'My_Untis_Schedule.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+
+        function clearData() {
+            if(confirm('هل أنت متأكد من مسح جميع المواد وتفريغ الجدول؟')) {
+                tableBody.innerHTML = localStorage.getItem('emptyOriginal');
+                saveData();
+                location.reload();
+            }
+        }
+
+        // السحب والإفلات
+        let draggedCard = null; let sourceZone = null;
+        function setupDragAndDrop() {
+            document.querySelectorAll('.class-card').forEach(card => {
+                card.addEventListener('dragstart', function() { draggedCard = this; sourceZone = this.closest('.drop-zone'); setTimeout(() => this.classList.add('dragging'), 0); });
+                card.addEventListener('dragend', function() { this.classList.remove('dragging'); draggedCard = null; });
+            });
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.background = 'rgba(59, 130, 246, 0.1)'; });
+                zone.addEventListener('dragleave', () => { zone.style.background = ''; });
+                zone.addEventListener('drop', function(e) {
+                    e.preventDefault(); this.style.background = '';
+                    if (draggedCard && this !== sourceZone) {
+                        if (this.querySelector('.empty-slot')) {
+                            this.innerHTML = ''; this.appendChild(draggedCard);
+                            sourceZone.innerHTML = '<div class="empty-slot" onclick="addCard(this)"></div>';
+                        } else if (this.querySelector('.class-card')) {
+                            let existing = this.querySelector('.class-card');
+                            sourceZone.appendChild(existing); this.appendChild(draggedCard);
+                        }
+                        saveData();
+                    }
+                });
+            });
+        }
+    </script>
 </body>
 </html>
