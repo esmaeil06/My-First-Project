@@ -17,13 +17,32 @@ function showToast(message) {
     }, 3000);
 }
 
-function highlightToday() {
-    const today = new Date().getDay();
-    if(today >= 1 && today <= 5) {
-        document.getElementById('th-' + today).classList.add('today-col');
-        const cells = document.querySelectorAll('.col-' + today);
-        cells.forEach(cell => cell.classList.add('today-col'));
+// دالة Untis: إظهار اليوم المحدد فقط على الهواتف
+function showDay(dayIndex) {
+    // تلوين الزر النشط في الأعلى
+    document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
+    const tabs = document.querySelectorAll('.day-tab');
+    if(tabs[dayIndex-1]) tabs[dayIndex-1].classList.add('active');
+
+    // إخفاء كل الأعمدة وإظهار العمود المطلوب فقط (الخدعة البصرية)
+    for(let i=1; i<=5; i++) {
+        document.querySelectorAll('.col-' + i).forEach(td => td.classList.remove('active-day'));
     }
+    document.querySelectorAll('.col-' + dayIndex).forEach(td => td.classList.add('active-day'));
+}
+
+function highlightToday() {
+    let today = new Date().getDay(); // 1 = Monday
+    if(today < 1 || today > 5) today = 1; // إذا كان السبت أو الأحد، اجعله الإثنين افتراضياً
+    
+    // تلوين الجدول للكمبيوتر
+    if(document.getElementById('th-' + today)) {
+        document.getElementById('th-' + today).classList.add('today-col');
+        document.querySelectorAll('.col-' + today).forEach(cell => cell.classList.add('today-col'));
+    }
+
+    // تفعيل اليوم التلقائي للهاتف
+    showDay(today);
 }
 
 window.onload = function() {
@@ -67,9 +86,9 @@ function removeCard(btn) {
     let td = btn.closest('td');
     let colClass = Array.from(td.classList).find(c => c.startsWith('col-')) || '';
     let todayClass = td.classList.contains('today-col') ? ' today-col' : '';
-    let dataLabel = td.getAttribute('data-label') || '';
+    let activeDayClass = td.classList.contains('active-day') ? ' active-day' : '';
     
-    td.className = `${colClass} ${todayClass} drop-zone`;
+    td.className = `${colClass} ${todayClass} ${activeDayClass} drop-zone`;
     td.innerHTML = `<div class="empty-slot" onclick="addCard(this)"></div>`;
     saveData();
     showToast('تم حذف المادة 🗑️');
@@ -94,15 +113,15 @@ function addTimeRow(position) {
     const tr = document.createElement('tr');
     tr.innerHTML = `
         <td class="time-col" contenteditable="true" oninput="saveData()">00:00<br>00:00</td>
-        <td class="col-1 drop-zone" data-label="الإثنين"><div class="empty-slot" onclick="addCard(this)"></div></td>
-        <td class="col-2 drop-zone" data-label="الثلاثاء"><div class="empty-slot" onclick="addCard(this)"></div></td>
-        <td class="col-3 drop-zone" data-label="الأربعاء"><div class="empty-slot" onclick="addCard(this)"></div></td>
-        <td class="col-4 drop-zone" data-label="الخميس"><div class="empty-slot" onclick="addCard(this)"></div></td>
-        <td class="col-5 drop-zone" data-label="الجمعة"><div class="empty-slot" onclick="addCard(this)"></div></td>
+        <td class="col-1 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+        <td class="col-2 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+        <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+        <td class="col-4 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+        <td class="col-5 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
     `;
     if (position === 'top') { tableBody.insertBefore(tr, tableBody.firstChild); } 
     else { tableBody.appendChild(tr); }
-    highlightToday();
+    highlightToday(); // لإعادة تفعيل العمود النشط على الصف الجديد
     saveData();
     showToast('تمت إضافة وقت جديد ⏰');
 }
@@ -138,7 +157,7 @@ function clearData() {
     }
 }
 
-// ميزة السحب والإفلات (Drag and Drop)
+// ميزة السحب والإفلات
 let draggedCard = null;
 let sourceZone = null;
 
