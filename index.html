@@ -35,45 +35,31 @@
         .theme-selector, .action-btn { background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 8px; font-size: 13px; cursor: pointer; }
         .action-btn { background: #3b82f6; color: white; border: none; font-weight: bold; }
 
-        /* --- السر هنا: منع السحب الجانبي وجعل الجدول يناسب الشاشة --- */
-        .table-wrapper { 
-            width: 100%; 
-            max-width: 1200px; 
-            overflow: hidden; /* منع السحب الجانبي تماماً */
-            background: transparent;
-        }
-
-        table { 
-            width: 100%; 
-            table-layout: fixed; /* إجبار الأعمدة على التساوي وعدم تجاوز الشاشة */
-            border-collapse: separate; 
-            border-spacing: 2px; /* مسافات ضيقة مثل Untis */
-        }
+        .table-wrapper { width: 100%; max-width: 1200px; overflow: hidden; background: transparent; }
+        table { width: 100%; table-layout: fixed; border-collapse: separate; border-spacing: 2px; }
 
         th { font-size: 11px; padding-bottom: 5px; border-bottom: 2px solid var(--border-color); color: var(--text-sub); font-weight: bold; word-wrap: break-word;}
-        td { vertical-align: top; }
+        td { vertical-align: top; transition: 0.2s; }
 
-        /* عمود الوقت ثابت وصغير */
         .time-col { width: 40px; text-align: center; color: var(--text-sub); font-size: 10px; font-weight: bold; border-right: 1px dashed var(--border-color); vertical-align: middle; padding: 0;}
         .time-col-header { width: 40px; }
 
         .today-col { background-color: var(--current-day-bg); border-radius: 4px; }
         th.today-col { color: #3b82f6; border-bottom-color: #3b82f6; }
 
-        /* البطاقات مصممة لتكون صغيرة ومتجاوبة */
         .class-card { background: var(--card-bg); border-right: 3px solid #3b82f6; border-radius: 6px; padding: 4px; min-height: 50px; position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; cursor: grab; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-        .class-card[contenteditable="true"]:focus { outline: 1px solid #3b82f6; }
+        .class-card[contenteditable="true"]:focus { outline: 1px solid #3b82f6; cursor: text;}
+        .class-card.dragging { opacity: 0.4; border: 1px dashed #3b82f6; }
         
         .class-title { font-weight: bold; font-size: 11px; color: var(--text-main); width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .class-info { font-size: 9px; color: var(--text-sub); width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        /* أزرار التحكم داخل البطاقة (تظهر عند اللمس) */
         .card-controls { position: absolute; top: -5px; right: -5px; display: flex; flex-direction: column; gap: 2px; opacity: 0; transition: 0.2s; z-index: 10;}
         .class-card:hover .card-controls, .class-card:active .card-controls { opacity: 1; }
         .color-btn, .delete-btn { width: 18px; height: 18px; border-radius: 50%; border: none; font-size: 9px; background: #444; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;}
         .delete-btn { background: #ef4444; }
 
-        .empty-slot { min-height: 50px; border-radius: 6px; border: 1px dashed var(--border-color); display: flex; align-items: center; justify-content: center; cursor: pointer; color: transparent; font-size: 18px; }
+        .empty-slot { min-height: 50px; border-radius: 6px; border: 1px dashed var(--border-color); display: flex; align-items: center; justify-content: center; cursor: pointer; color: transparent; font-size: 18px; transition: 0.2s;}
         .empty-slot:active { background: var(--current-day-bg); color: #3b82f6; }
         .empty-slot::after { content: "+"; color: var(--border-color); font-size: 14px; font-weight: bold; }
 
@@ -82,7 +68,6 @@
 
         .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #3b82f6; color: white; padding: 10px 20px; border-radius: 20px; font-size: 12px; font-weight: bold; z-index: 9999; display: none; }
         
-        /* تخصيص دقيق للهواتف (تصغير الخطوط أكثر) */
         @media screen and (max-width: 400px) {
             .class-title { font-size: 9px; }
             .class-info { font-size: 8px; }
@@ -123,56 +108,56 @@
             <tbody id="tableBody">
                 <tr>
                     <td class="time-col" contenteditable="true" oninput="saveData()">08:00<br>09:30</td>
-                    <td class="col-1 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-2 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-4 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-5 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-1 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-2 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-3 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-4 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-5 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
                 </tr>
 
                 <tr>
                     <td class="time-col" contenteditable="true" oninput="saveData()">09:45<br>11:15</td>
-                    <td class="col-1 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-2 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-4 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-5 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-1 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-2 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-3 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-4 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-5 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
                 </tr>
 
                 <tr>
                     <td class="time-col" contenteditable="true" oninput="saveData()">11:30<br>13:00</td>
-                    <td class="col-1 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-2 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-4 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-5 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-1 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-2 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-3 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-4 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-5 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
                 </tr>
 
                 <tr>
                     <td class="time-col" contenteditable="true" oninput="saveData()">13:45<br>15:15</td>
-                    <td class="col-1 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-2 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-4 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-5 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-1 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-2 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-3 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-4 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-5 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
                 </tr>
 
                 <tr>
                     <td class="time-col" contenteditable="true" oninput="saveData()">15:30<br>17:00</td>
-                    <td class="col-1 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-2 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-4 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-5 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-1 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-2 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-3 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-4 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-5 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
                 </tr>
                 
                 <tr>
                     <td class="time-col" contenteditable="true" oninput="saveData()">17:15<br>18:45</td>
-                    <td class="col-1 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-2 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-4 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                    <td class="col-5 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-1 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-2 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-3 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-4 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                    <td class="col-5 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
                 </tr>
 
             </tbody>
@@ -180,7 +165,7 @@
     </div>
 
     <button class="add-row-btn" onclick="addTimeRow()">➕ أضف وقت إضافي</button>
-    <button class="reset" onclick="clearData()">⚠️ تفريغ الجدول بالكامل (مسح البيانات)</button>
+    <button class="reset" onclick="clearData()">⚠️ تفريغ الجدول بالكامل</button>
 
     <script>
         const tableBody = document.getElementById('tableBody');
@@ -198,35 +183,34 @@
         function highlightToday() {
             let today = new Date().getDay(); 
             if(today >= 1 && today <= 5) {
-                document.getElementById('th-' + today).classList.add('today-col');
-                document.querySelectorAll('.col-' + today).forEach(cell => cell.classList.add('today-col'));
+                if(document.getElementById('th-' + today)) {
+                    document.getElementById('th-' + today).classList.add('today-col');
+                    document.querySelectorAll('.col-' + today).forEach(cell => cell.classList.add('today-col'));
+                }
             }
         }
 
         window.onload = function() {
-            // حفظ نسخة فارغة للمصنع للعودة إليها
-            if(!localStorage.getItem('emptyOriginal')) { localStorage.setItem('emptyOriginal', tableBody.innerHTML); }
+            if(!localStorage.getItem('emptyOriginalV2')) { localStorage.setItem('emptyOriginalV2', tableBody.innerHTML); }
             
-            if(localStorage.getItem('myUntisTable')) { tableBody.innerHTML = localStorage.getItem('myUntisTable'); }
-            if(localStorage.getItem('myUntisTitle')) { mainTitle.innerHTML = localStorage.getItem('myUntisTitle'); }
+            if(localStorage.getItem('myUntisTableV2')) { tableBody.innerHTML = localStorage.getItem('myUntisTableV2'); }
+            if(localStorage.getItem('myUntisTitleV2')) { mainTitle.innerHTML = localStorage.getItem('myUntisTitleV2'); }
             
-            const savedTheme = localStorage.getItem('myUntisTheme') || 'dark';
+            const savedTheme = localStorage.getItem('myUntisThemeV2') || 'dark';
             document.body.setAttribute('data-theme', savedTheme);
             themeSelect.value = savedTheme;
 
             highlightToday();
-            setupDragAndDrop();
         };
 
         function saveData() { 
-            localStorage.setItem('myUntisTable', tableBody.innerHTML);
-            localStorage.setItem('myUntisTitle', mainTitle.innerHTML);
-            setupDragAndDrop(); 
+            localStorage.setItem('myUntisTableV2', tableBody.innerHTML);
+            localStorage.setItem('myUntisTitleV2', mainTitle.innerHTML);
         }
 
         function changeTheme() {
             document.body.setAttribute('data-theme', themeSelect.value);
-            localStorage.setItem('myUntisTheme', themeSelect.value);
+            localStorage.setItem('myUntisThemeV2', themeSelect.value);
         }
 
         function changeColor(btn) {
@@ -240,9 +224,6 @@
 
         function removeCard(btn) {
             let td = btn.closest('td');
-            let colClass = Array.from(td.classList).find(c => c.startsWith('col-')) || '';
-            let todayClass = td.classList.contains('today-col') ? ' today-col' : '';
-            td.className = `${colClass} ${todayClass} drop-zone`;
             td.innerHTML = `<div class="empty-slot" onclick="addCard(this)"></div>`;
             saveData();
         }
@@ -250,7 +231,7 @@
         function addCard(slot) {
             let td = slot.closest('td');
             td.innerHTML = `
-                <div class="class-card" draggable="true" data-color-index="0" style="border-right-color: #3b82f6;">
+                <div class="class-card" draggable="true" ondragstart="dragStart(event)" ondragend="dragEnd(event)" data-color-index="0" style="border-right-color: #3b82f6;">
                     <div class="card-controls" contenteditable="false">
                         <button class="color-btn" onclick="changeColor(this)">🎨</button>
                         <button class="delete-btn" onclick="removeCard(this)">✖</button>
@@ -265,11 +246,11 @@
             const tr = document.createElement('tr');
             tr.innerHTML = `
                 <td class="time-col" contenteditable="true" oninput="saveData()">00:00<br>00:00</td>
-                <td class="col-1 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                <td class="col-2 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                <td class="col-4 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
-                <td class="col-5 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                <td class="col-1 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                <td class="col-2 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                <td class="col-3 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                <td class="col-4 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
+                <td class="col-5 drop-zone" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)"><div class="empty-slot" onclick="addCard(this)"></div></td>
             `;
             tableBody.appendChild(tr);
             highlightToday();
@@ -280,7 +261,7 @@
             showToast('جاري التقاط الصورة...');
             html2canvas(document.getElementById('captureArea'), { 
                 backgroundColor: getComputedStyle(document.body).backgroundColor, 
-                scale: 3, // دقة عالية
+                scale: 3, 
                 useCORS: true 
             }).then(canvas => {
                 let link = document.createElement('a');
@@ -292,36 +273,52 @@
 
         function clearData() {
             if(confirm('هل أنت متأكد من مسح جميع المواد وتفريغ الجدول؟')) {
-                tableBody.innerHTML = localStorage.getItem('emptyOriginal');
+                tableBody.innerHTML = localStorage.getItem('emptyOriginalV2');
                 saveData();
                 location.reload();
             }
         }
 
-        // السحب والإفلات
-        let draggedCard = null; let sourceZone = null;
-        function setupDragAndDrop() {
-            document.querySelectorAll('.class-card').forEach(card => {
-                card.addEventListener('dragstart', function() { draggedCard = this; sourceZone = this.closest('.drop-zone'); setTimeout(() => this.classList.add('dragging'), 0); });
-                card.addEventListener('dragend', function() { this.classList.remove('dragging'); draggedCard = null; });
-            });
-            document.querySelectorAll('.drop-zone').forEach(zone => {
-                zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.background = 'rgba(59, 130, 246, 0.1)'; });
-                zone.addEventListener('dragleave', () => { zone.style.background = ''; });
-                zone.addEventListener('drop', function(e) {
-                    e.preventDefault(); this.style.background = '';
-                    if (draggedCard && this !== sourceZone) {
-                        if (this.querySelector('.empty-slot')) {
-                            this.innerHTML = ''; this.appendChild(draggedCard);
-                            sourceZone.innerHTML = '<div class="empty-slot" onclick="addCard(this)"></div>';
-                        } else if (this.querySelector('.class-card')) {
-                            let existing = this.querySelector('.class-card');
-                            sourceZone.appendChild(existing); this.appendChild(draggedCard);
-                        }
-                        saveData();
-                    }
-                });
-            });
+        // --- نظام السحب والإفلات النظيف (بدون تكرار أو رسائل) ---
+        let draggedCard = null;
+        let sourceZone = null;
+
+        function dragStart(e) {
+            draggedCard = e.target.closest('.class-card');
+            sourceZone = draggedCard.closest('.drop-zone');
+            setTimeout(() => draggedCard.classList.add('dragging'), 0);
+        }
+
+        function dragEnd(e) {
+            if(draggedCard) draggedCard.classList.remove('dragging');
+        }
+
+        function allowDrop(e) {
+            e.preventDefault();
+            e.currentTarget.style.background = 'rgba(59, 130, 246, 0.1)';
+        }
+
+        function dragLeave(e) {
+            e.currentTarget.style.background = '';
+        }
+
+        function drop(e) {
+            e.preventDefault();
+            let dropZone = e.currentTarget;
+            dropZone.style.background = '';
+
+            if (draggedCard && dropZone !== sourceZone) {
+                if (dropZone.querySelector('.empty-slot')) {
+                    dropZone.innerHTML = '';
+                    dropZone.appendChild(draggedCard);
+                    sourceZone.innerHTML = '<div class="empty-slot" onclick="addCard(this)"></div>';
+                } else if (dropZone.querySelector('.class-card')) {
+                    let existing = dropZone.querySelector('.class-card');
+                    sourceZone.appendChild(existing);
+                    dropZone.appendChild(draggedCard);
+                }
+                saveData();
+            }
         }
     </script>
 </body>
