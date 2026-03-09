@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Stundenplan Pro - Mechatronik</title>
+    <title>Stundenplan Pro - Untis Style</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous"></script>
     <script src="https://bernardo-castilho.github.io/DragDropTouch/DragDropTouch.js"></script>
@@ -25,31 +25,23 @@
         </div>
     </div>
 
-    <div class="mobile-day-tabs hide-on-desktop">
-        <button class="day-tab" onclick="showDay(1)">الإثنين</button>
-        <button class="day-tab" onclick="showDay(2)">الثلاثاء</button>
-        <button class="day-tab" onclick="showDay(3)">الأربعاء</button>
-        <button class="day-tab" onclick="showDay(4)">الخميس</button>
-        <button class="day-tab" onclick="showDay(5)">الجمعة</button>
-    </div>
-
     <button class="add-row-btn" onclick="addTimeRow('top')">➕ أضف وقت جديد أعلى الجدول</button>
 
     <div class="table-wrapper" id="captureArea">
         <table id="scheduleTable">
             <thead>
                 <tr>
-                    <th>الوقت</th>
-                    <th id="th-1">Montag<br>الإثنين</th>
-                    <th id="th-2">Dienstag<br>الثلاثاء</th>
-                    <th id="th-3">Mittwoch<br>الأربعاء</th>
-                    <th id="th-4">Donnerstag<br>الخميس</th>
-                    <th id="th-5">Freitag<br>الجمعة</th>
+                    <th class="time-col-header">الوقت</th>
+                    <th id="th-1">Mo.<br>الإثنين</th>
+                    <th id="th-2">Di.<br>الثلاثاء</th>
+                    <th id="th-3">Mi.<br>الأربعاء</th>
+                    <th id="th-4">Do.<br>الخميس</th>
+                    <th id="th-5">Fr.<br>الجمعة</th>
                 </tr>
             </thead>
             <tbody id="tableBody">
                 <tr>
-                    <td class="time-col" contenteditable="true" oninput="saveData()">08:00 AM<br>09:30 AM</td>
+                    <td class="time-col" contenteditable="true" oninput="saveData()">08:00<br>09:30</td>
                     <td class="col-1 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
                     <td class="col-2 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
                     <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
@@ -57,56 +49,56 @@
                     <td class="col-5 drop-zone">
                         <div class="class-card" draggable="true" data-color-index="4" style="border-right-color: #8b5cf6;">
                             <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Physik Pr.</div><div class="class-info">lux<br>مختبر فيزياء</div></div>
+                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Physik Pr.</div><div class="class-info">lux</div></div>
                         </div>
                     </td>
                 </tr>
 
-                <tr class="pause-row"><td class="time-col">15m</td><td colspan="5"><div class="pause-divider">☕ استراحة</div></td></tr>
+                <tr class="pause-row"><td class="time-col">15m</td><td colspan="5"><div class="pause-divider">☕</div></td></tr>
 
                 <tr>
-                    <td class="time-col" contenteditable="true" oninput="saveData()">09:45 AM<br>11:15 AM</td>
+                    <td class="time-col" contenteditable="true" oninput="saveData()">09:45<br>11:15</td>
                     <td class="col-1 drop-zone">
                         <div class="class-card" draggable="true" data-color-index="0" style="border-right-color: #3b82f6;">
                             <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Mathe 1</div><div class="class-info">hoefert<br>نظري</div></div>
+                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Mathe 1</div><div class="class-info">hoefert</div></div>
                         </div>
                     </td>
                     <td class="col-2 drop-zone">
                         <div class="class-card" draggable="true" data-color-index="4" style="border-right-color: #8b5cf6;">
                             <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Physik</div><div class="class-info">lux<br>نظري</div></div>
+                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Physik</div><div class="class-info">lux</div></div>
                         </div>
                     </td>
                     <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
                     <td class="col-4 drop-zone">
                         <div class="class-card" draggable="true" data-color-index="2" style="border-right-color: #ef4444;">
                             <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Maschinenbau</div><div class="class-info">reibetan<br>ميكانيك</div></div>
+                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Maschinenbau</div><div class="class-info">reibetan</div></div>
                         </div>
                     </td>
                     <td class="col-5 drop-zone">
                         <div class="class-card" draggable="true" data-color-index="4" style="border-right-color: #8b5cf6;">
                             <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Physik Pr.</div><div class="class-info">lux<br>مختبر فيزياء</div></div>
+                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Physik Pr.</div><div class="class-info">lux</div></div>
                         </div>
                     </td>
                 </tr>
 
-                <tr class="pause-row"><td class="time-col">15m</td><td colspan="5"><div class="pause-divider">☕ استراحة</div></td></tr>
+                <tr class="pause-row"><td class="time-col">15m</td><td colspan="5"><div class="pause-divider">☕</div></td></tr>
 
                 <tr>
-                    <td class="time-col" contenteditable="true" oninput="saveData()">11:30 AM<br>01:00 PM</td>
+                    <td class="time-col" contenteditable="true" oninput="saveData()">11:30<br>13:00</td>
                     <td class="col-1 drop-zone">
                         <div class="class-card" draggable="true" data-color-index="4" style="border-right-color: #8b5cf6;">
                             <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Physik</div><div class="class-info">raudzis<br>نظري</div></div>
+                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Physik</div><div class="class-info">raudzis</div></div>
                         </div>
                     </td>
                     <td class="col-2 drop-zone">
                         <div class="class-card" draggable="true" data-color-index="4" style="border-right-color: #8b5cf6;">
                             <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Physik</div><div class="class-info">raudzis<br>نظري</div></div>
+                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Physik</div><div class="class-info">raudzis</div></div>
                         </div>
                     </td>
                     <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
@@ -114,25 +106,25 @@
                     <td class="col-5 drop-zone">
                         <div class="class-card" draggable="true" data-color-index="1" style="border-right-color: #10b981;">
                             <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">CAD</div><div class="class-info">busch<br>رسم هندسي</div></div>
+                            <div contenteditable="true" oninput="saveData()"><div class="class-title">CAD</div><div class="class-info">busch</div></div>
                         </div>
                     </td>
                 </tr>
 
-                <tr class="pause-row"><td class="time-col">45m</td><td colspan="5"><div class="pause-divider lunch-break">🍽️ استراحة الغداء</div></td></tr>
+                <tr class="pause-row"><td class="time-col">45m</td><td colspan="5"><div class="pause-divider lunch-break">🍽️</div></td></tr>
 
                 <tr>
-                    <td class="time-col" contenteditable="true" oninput="saveData()">01:45 PM<br>03:15 PM</td>
+                    <td class="time-col" contenteditable="true" oninput="saveData()">13:45<br>15:15</td>
                     <td class="col-1 drop-zone">
                         <div class="class-card" draggable="true" data-color-index="2" style="border-right-color: #ef4444;">
                             <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Werkstoffkunde</div><div class="class-info">laepple<br>علم المواد</div></div>
+                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Werkstoff.</div><div class="class-info">laepple</div></div>
                         </div>
                     </td>
                     <td class="col-2 drop-zone">
                         <div class="class-card" draggable="true" data-color-index="0" style="border-right-color: #3b82f6;">
                             <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Mathe 1</div><div class="class-info">hoefert<br>نظري</div></div>
+                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Mathe 1</div><div class="class-info">hoefert</div></div>
                         </div>
                     </td>
                     <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
@@ -140,48 +132,48 @@
                     <td class="col-5 drop-zone">
                         <div class="class-card" draggable="true" data-color-index="1" style="border-right-color: #10b981;">
                             <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">CAD</div><div class="class-info">busch<br>رسم هندسي</div></div>
+                            <div contenteditable="true" oninput="saveData()"><div class="class-title">CAD</div><div class="class-info">busch</div></div>
                         </div>
                     </td>
                 </tr>
 
-                <tr class="pause-row"><td class="time-col">15m</td><td colspan="5"><div class="pause-divider">☕ استراحة</div></td></tr>
+                <tr class="pause-row"><td class="time-col">15m</td><td colspan="5"><div class="pause-divider">☕</div></td></tr>
 
                 <tr>
-                    <td class="time-col" contenteditable="true" oninput="saveData()">03:30 PM<br>05:00 PM</td>
+                    <td class="time-col" contenteditable="true" oninput="saveData()">15:30<br>17:00</td>
                     <td class="col-1 drop-zone">
                         <div class="class-card" draggable="true" data-color-index="0" style="border-right-color: #3b82f6;">
                             <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Mathe Übung</div><div class="class-info">TEC T...<br>تمارين</div></div>
+                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Mathe Üb.</div><div class="class-info">TEC T...</div></div>
                         </div>
                     </td>
                     <td class="col-2 drop-zone">
                         <div class="class-card" draggable="true" data-color-index="0" style="border-right-color: #3b82f6;">
                             <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Mathe 1</div><div class="class-info">hilberat<br>نظري</div></div>
+                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Mathe 1</div><div class="class-info">hilberat</div></div>
                         </div>
                     </td>
                     <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
                     <td class="col-4 drop-zone">
                         <div class="class-card" draggable="true" data-color-index="3" style="border-right-color: #f59e0b;">
                             <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Rechnungswesen</div><div class="class-info">kldora<br>محاسبة</div></div>
+                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Rechnung.</div><div class="class-info">kldora</div></div>
                         </div>
                     </td>
                     <td class="col-5 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
                 </tr>
 
-                <tr class="pause-row"><td class="time-col">15m</td><td colspan="5"><div class="pause-divider">☕ استراحة</div></td></tr>
+                <tr class="pause-row"><td class="time-col">15m</td><td colspan="5"><div class="pause-divider">☕</div></td></tr>
 
                 <tr>
-                    <td class="time-col" contenteditable="true" oninput="saveData()">05:15 PM<br>06:45 PM</td>
+                    <td class="time-col" contenteditable="true" oninput="saveData()">17:15<br>18:45</td>
                     <td class="col-1 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
                     <td class="col-2 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
                     <td class="col-3 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
                     <td class="col-4 drop-zone">
                         <div class="class-card" draggable="true" data-color-index="3" style="border-right-color: #f59e0b;">
                             <div class="card-controls" contenteditable="false"><button class="color-btn" onclick="changeColor(this)">🎨</button><button class="delete-btn" onclick="removeCard(this)">🗑️</button></div>
-                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Projektmanagement</div><div class="class-info">bitter<br>إدارة مشاريع</div></div>
+                            <div contenteditable="true" oninput="saveData()"><div class="class-title">Projektmgt.</div><div class="class-info">bitter</div></div>
                         </div>
                     </td>
                     <td class="col-5 drop-zone"><div class="empty-slot" onclick="addCard(this)"></div></td>
@@ -193,8 +185,8 @@
     <button class="add-row-btn" onclick="addTimeRow('bottom')">➕ أضف وقت جديد أسفل الجدول</button>
 
     <div class="notes-section">
-        <h3>📝 ملاحظاتي وواجباتي</h3>
-        <textarea id="myNotes" class="notes-area" placeholder="اكتب هنا أي مهام أو ملاحظات..." oninput="saveNotes()"></textarea>
+        <h3>📝 ملاحظاتي</h3>
+        <textarea id="myNotes" class="notes-area" placeholder="اكتب ملاحظاتك هنا..." oninput="saveNotes()"></textarea>
     </div>
 
     <button class="reset" onclick="clearData()">⚠️ إعادة الجدول للمصنع</button>

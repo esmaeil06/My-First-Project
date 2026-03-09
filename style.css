@@ -38,106 +38,94 @@ body {
     font-family: 'Segoe UI', system-ui, sans-serif;
     background-color: var(--bg-color);
     color: var(--text-main);
-    margin: 0; padding: 20px;
+    margin: 0; padding: 15px;
     display: flex; flex-direction: column; align-items: center;
     transition: background-color 0.4s ease;
 }
 
 .toast-container { position: fixed; bottom: 20px; left: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
-.toast { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; padding: 12px 24px; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.3); opacity: 0; transform: translateX(-20px); animation: slideIn 0.3s forwards; }
+.toast { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.3); opacity: 0; transform: translateX(-20px); animation: slideIn 0.3s forwards; font-size: 14px;}
 @keyframes slideIn { to { opacity: 1; transform: translateX(0); } }
 @keyframes fadeOut { to { opacity: 0; transform: translateY(10px); } }
 
 .header-container { text-align: center; margin-bottom: 10px; width: 100%; max-width: 1200px; display: flex; flex-direction: column; align-items: center; }
-h1 { font-size: 24px; margin: 0 0 10px 0; padding: 5px 15px; border-radius: 8px; background: linear-gradient(to left, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; border: 1px dashed transparent; transition: 0.3s; }
+h1 { font-size: 22px; margin: 0 0 10px 0; padding: 5px; border-radius: 8px; background: linear-gradient(to left, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; border: 1px dashed transparent; }
 h1[contenteditable="true"]:focus { outline: none; border: 1px dashed var(--text-main); background: none; -webkit-text-fill-color: var(--text-main); }
 
-.controls-row { display: flex; justify-content: center; align-items: center; width: 100%; margin-bottom: 15px; gap: 10px; flex-wrap: wrap; }
-.theme-selector { background-color: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 10px 15px; border-radius: 8px; font-size: 14px; cursor: pointer; backdrop-filter: blur(10px); }
-.action-btn { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
-.action-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(59, 130, 246, 0.5); }
+.controls-row { display: flex; justify-content: center; align-items: center; width: 100%; margin-bottom: 10px; gap: 8px; flex-wrap: wrap; }
+.theme-selector { background-color: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color); padding: 8px 12px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+.action-btn { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 13px;}
 
-.add-row-btn { background-color: transparent; color: var(--text-sub); border: 2px dashed var(--border-color); padding: 10px; border-radius: 12px; cursor: pointer; width: 100%; max-width: 1200px; margin: 10px 0; font-weight: bold; transition: all 0.3s; }
+.add-row-btn { background-color: transparent; color: var(--text-sub); border: 2px dashed var(--border-color); padding: 8px; border-radius: 8px; cursor: pointer; width: 100%; max-width: 1200px; margin: 5px 0; font-weight: bold; font-size: 13px; transition: 0.3s; }
 .add-row-btn:hover { background-color: rgba(59, 130, 246, 0.1); color: #3b82f6; border-color: #3b82f6; }
 
-.hide-on-desktop { display: none; } /* إخفاء أزرار الأيام على الكمبيوتر */
+/* إعدادات الصندوق القابل للسحب (Untis Grid Style) */
+.table-wrapper { 
+    width: 100%; 
+    max-width: 1200px; 
+    overflow-x: auto; /* يسمح بالسحب الأفقي */
+    -webkit-overflow-scrolling: touch; /* سحب ناعم على الآيفون */
+    background: var(--bg-color); 
+    border-radius: 12px; 
+    padding: 10px 0; /* تقليل الحواف الجانبية */
+    border: 1px solid var(--border-color);
+}
 
-.table-wrapper { width: 100%; max-width: 1200px; overflow-x: auto; background: var(--bg-color); border-radius: 16px; padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid var(--border-color); position: relative; }
-table { width: 100%; border-collapse: separate; border-spacing: 10px; min-width: 900px; }
-th { color: var(--text-sub); font-weight: 600; font-size: 15px; padding-bottom: 15px; border-bottom: 2px solid var(--border-color); }
-td { width: 16%; vertical-align: top; border-radius: 8px; }
+/* تخصيص شريط التمرير (Scrollbar) ليكون أنيقاً */
+.table-wrapper::-webkit-scrollbar { height: 6px; }
+.table-wrapper::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
 
-.today-col { background-color: var(--current-day-bg); border: 1px solid var(--border-color); border-radius: 12px; }
+table { 
+    width: 100%; 
+    border-collapse: separate; 
+    border-spacing: 4px; /* مسافات ضيقة مثل Untis */
+    min-width: 650px; /* هذا الرقم يجبر الجدول على عدم التكدس في الهاتف، مما يتيح السحب الأفقي */
+}
+
+th { color: var(--text-sub); font-weight: 600; font-size: 13px; padding-bottom: 10px; border-bottom: 2px solid var(--border-color); }
+td { vertical-align: top; border-radius: 6px; }
+
+.today-col { background-color: var(--current-day-bg); border: 1px solid var(--border-color); }
 th.today-col { color: #3b82f6; font-weight: bold; border-bottom: 2px solid #3b82f6; }
 
-.time-col { width: 10%; text-align: left; padding-right: 15px; color: var(--text-sub); font-size: 13px; font-weight: bold; border-right: 2px solid var(--border-color); vertical-align: middle; }
+.time-col-header { width: 40px; }
+.time-col { width: 50px; text-align: center; color: var(--text-sub); font-size: 11px; font-weight: bold; border-right: 2px solid var(--border-color); vertical-align: middle; padding: 0 5px;}
 
-.pause-row td { padding: 0; height: 25px; vertical-align: middle; border: none; background: none; }
-.pause-divider { display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--pause-text); background: var(--pause-bg); border-radius: 6px; height: 100%; border: 1px dashed var(--border-color); }
-.lunch-break { height: 35px; background: repeating-linear-gradient(45deg, var(--pause-bg), var(--pause-bg) 10px, var(--border-color) 10px, var(--border-color) 11px); color: var(--text-main); font-weight: bold; }
+.pause-row td { padding: 0; height: 15px; vertical-align: middle; border: none; background: none; }
+.pause-divider { display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--pause-text); background: var(--pause-bg); border-radius: 4px; height: 100%; }
+.lunch-break { height: 20px; background: repeating-linear-gradient(45deg, var(--pause-bg), var(--pause-bg) 5px, var(--border-color) 5px, var(--border-color) 6px); color: var(--text-main); font-weight: bold; font-size: 11px;}
 
-.class-card { background-color: var(--card-bg); backdrop-filter: blur(10px); border-right: 5px solid #3b82f6; border-radius: 12px; padding: 12px; min-height: 80px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: all 0.3s; position: relative; display: flex; flex-direction: column; justify-content: center; cursor: grab; }
-.class-card:hover { background-color: var(--card-hover); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
-.class-card[contenteditable="true"]:focus { outline: 2px dashed #3b82f6; background-color: var(--card-hover); cursor: text; }
+.class-card { background-color: var(--card-bg); border-right: 4px solid #3b82f6; border-radius: 8px; padding: 6px 8px; min-height: 55px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: relative; display: flex; flex-direction: column; justify-content: center; cursor: grab; }
+.class-card:active { cursor: grabbing; opacity: 0.8; }
+.class-card[contenteditable="true"]:focus { outline: 1px dashed #3b82f6; background-color: var(--card-hover); }
+.class-card.dragging { opacity: 0.5; border: 1px dashed #3b82f6; }
+.drop-zone.drag-over { background-color: rgba(59, 130, 246, 0.1); border-radius: 8px; outline: 1px dashed #3b82f6; }
 
-.class-card.dragging { opacity: 0.5; border: 2px dashed #3b82f6; }
-.drop-zone.drag-over { background-color: rgba(59, 130, 246, 0.1); border-radius: 12px; outline: 2px dashed #3b82f6; }
+/* تصغير نصوص البطاقات لتناسب العرض الأفقي للهاتف */
+.class-title { font-weight: bold; font-size: 12px; margin-bottom: 2px; color: var(--text-main); word-wrap: break-word;}
+.class-info { color: var(--text-sub); font-size: 10px; line-height: 1.2; word-wrap: break-word;}
 
-.class-title { font-weight: 700; font-size: 15px; margin-bottom: 4px; color: var(--text-main); }
-.class-info { color: var(--text-sub); font-size: 12px; line-height: 1.4; }
-
-.card-controls { position: absolute; top: 8px; left: 8px; display: flex; gap: 5px; opacity: 0; transition: opacity 0.2s; }
+/* أزرار التحكم داخل البطاقة (أصغر) */
+.card-controls { position: absolute; top: 4px; left: 4px; display: flex; gap: 3px; opacity: 0; transition: 0.2s; }
 .class-card:hover .card-controls { opacity: 1; }
-.color-btn, .delete-btn { width: 24px; height: 24px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--text-main); background: rgba(128,128,128,0.2); transition: 0.2s; }
-.color-btn:hover { background: rgba(128,128,128,0.4); }
-.delete-btn:hover { color: #ff6b6b; background: rgba(255, 107, 107, 0.2); }
+.color-btn, .delete-btn { width: 20px; height: 20px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--text-main); background: rgba(128,128,128,0.2); }
 
-.empty-slot { min-height: 80px; border-radius: 12px; border: 2px dashed var(--border-color); display: flex; align-items: center; justify-content: center; cursor: pointer; color: transparent; font-size: 24px; transition: all 0.2s; }
+.empty-slot { min-height: 55px; border-radius: 8px; border: 1px dashed var(--border-color); display: flex; align-items: center; justify-content: center; cursor: pointer; color: transparent; transition: 0.2s; }
 .empty-slot:hover { background-color: var(--pause-bg); border-color: #3b82f6; color: #3b82f6; }
-.empty-slot::after { content: "+ إضافة"; font-size: 14px; font-weight: bold; opacity: 0; }
+.empty-slot::after { content: "+"; font-size: 16px; font-weight: bold; opacity: 0; }
 .empty-slot:hover::after { opacity: 1; }
 
-.notes-section { width: 100%; max-width: 1200px; margin-top: 20px; background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid var(--border-color); border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-.notes-section h3 { margin-top: 0; color: var(--text-main); font-size: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px; }
-.notes-area { width: 100%; min-height: 100px; background: none; border: none; color: var(--text-sub); font-family: inherit; font-size: 14px; resize: vertical; outline: none; }
+.notes-section { width: 100%; max-width: 1200px; margin-top: 15px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.notes-section h3 { margin-top: 0; color: var(--text-main); font-size: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; }
+.notes-area { width: 100%; min-height: 60px; background: none; border: none; color: var(--text-sub); font-family: inherit; font-size: 13px; resize: vertical; outline: none; }
 
-button.reset { margin-top: 20px; padding: 10px 20px; background: transparent; color: #ef4444; border: 1px dashed #ef4444; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-button.reset:hover { background: rgba(239, 68, 68, 0.1); }
+button.reset { margin-top: 15px; padding: 8px 15px; background: transparent; color: #ef4444; border: 1px dashed #ef4444; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; }
 
-
-/* ========================================= */
-/* تصميم UNTIS للهواتف المحمولة */
-/* ========================================= */
+/* إعدادات إضافية للهاتف لضمان العرض الأفقي */
 @media screen and (max-width: 768px) {
-    body { padding: 10px; }
-    .controls-row { flex-direction: column; width: 100%; }
-    .action-btn, .theme-selector, .add-row-btn { width: 100%; justify-content: center; margin-bottom: 5px; }
+    .controls-row { justify-content: space-between; }
+    .action-btn, .theme-selector { flex: 1; text-align: center; }
     
-    /* إظهار شريط الأيام بالأعلى */
-    .hide-on-desktop { display: flex; }
-    .mobile-day-tabs { width: 100%; justify-content: space-between; margin-bottom: 15px; background: var(--card-bg); border-radius: 12px; padding: 5px; border: 1px solid var(--border-color); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    .day-tab { flex: 1; padding: 10px 5px; background: transparent; border: none; color: var(--text-sub); font-weight: bold; font-size: 13px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
-    .day-tab.active { background: #3b82f6; color: white; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.4); }
-
-    /* تفكيك الجدول ليصبح مثل القائمة (Timeline) */
-    .table-wrapper { padding: 0; background: transparent; border: none; box-shadow: none; overflow-x: visible; }
-    table { display: block; width: 100%; }
-    thead { display: none; } /* إخفاء الترويسة العلوية */
-    tbody { display: block; width: 100%; }
-    
-    /* كل صف (وقت) يصبح صندوقاً يحتوي على الوقت والمادة */
-    tr { display: flex; flex-direction: row; width: 100%; margin-bottom: 12px; background: var(--card-bg); border-radius: 16px; padding: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 10px rgba(0,0,0,0.1); align-items: center; }
-    
-    /* إخفاء كل الأعمدة الافتراضية، سنظهر فقط عمود اليوم النشط عبر الجافاسكربت */
-    td { display: none; border: none; padding: 0; margin: 0; }
-    
-    /* تثبيت عمود الوقت على اليسار */
-    td.time-col { display: flex; width: 30%; font-size: 12px; flex-direction: column; justify-content: center; align-items: center; border-left: 1px dashed var(--border-color); padding-left: 10px; margin-left: 10px; color: #3b82f6; text-align: center; }
-    
-    /* العمود النشط (اليوم المختار) يظهر على اليمين بجانب الوقت */
-    td.active-day { display: block; width: 70%; }
-    
-    .class-card { width: 100%; min-height: 60px; margin: 0; box-shadow: none; }
-    .empty-slot { width: 100%; min-height: 60px; font-size: 14px; margin: 0; }
-    .pause-row { display: none; } /* إخفاء أسطر الاستراحة لأنها غير مفيدة في هذا العرض */
+    /* جعل أزرار البطاقات تظهر دائماً على الهاتف (لأن الـ hover لا يعمل باللمس دائماً) */
+    .card-controls { opacity: 1; background: var(--card-bg); padding: 2px; border-radius: 4px; box-shadow: 0 0 5px rgba(0,0,0,0.5);}
 }

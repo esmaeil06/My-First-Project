@@ -14,44 +14,26 @@ function showToast(message) {
     setTimeout(() => {
         toast.style.animation = 'fadeOut 0.3s forwards';
         setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
-
-// دالة Untis: إظهار اليوم المحدد فقط على الهواتف
-function showDay(dayIndex) {
-    // تلوين الزر النشط في الأعلى
-    document.querySelectorAll('.day-tab').forEach(t => t.classList.remove('active'));
-    const tabs = document.querySelectorAll('.day-tab');
-    if(tabs[dayIndex-1]) tabs[dayIndex-1].classList.add('active');
-
-    // إخفاء كل الأعمدة وإظهار العمود المطلوب فقط (الخدعة البصرية)
-    for(let i=1; i<=5; i++) {
-        document.querySelectorAll('.col-' + i).forEach(td => td.classList.remove('active-day'));
-    }
-    document.querySelectorAll('.col-' + dayIndex).forEach(td => td.classList.add('active-day'));
+    }, 2500);
 }
 
 function highlightToday() {
     let today = new Date().getDay(); // 1 = Monday
-    if(today < 1 || today > 5) today = 1; // إذا كان السبت أو الأحد، اجعله الإثنين افتراضياً
+    if(today < 1 || today > 5) return; // السبت والأحد لا شيء
     
-    // تلوين الجدول للكمبيوتر
     if(document.getElementById('th-' + today)) {
         document.getElementById('th-' + today).classList.add('today-col');
         document.querySelectorAll('.col-' + today).forEach(cell => cell.classList.add('today-col'));
     }
-
-    // تفعيل اليوم التلقائي للهاتف
-    showDay(today);
 }
 
 window.onload = function() {
-    if(!localStorage.getItem('proAppOriginal')) { localStorage.setItem('proAppOriginal', tableBody.innerHTML); }
-    if(localStorage.getItem('proAppTable')) { tableBody.innerHTML = localStorage.getItem('proAppTable'); }
-    if(localStorage.getItem('proAppTitle')) { mainTitle.innerHTML = localStorage.getItem('proAppTitle'); }
-    if(localStorage.getItem('proAppNotes')) { notesArea.value = localStorage.getItem('proAppNotes'); }
+    if(!localStorage.getItem('untisAppOriginal')) { localStorage.setItem('untisAppOriginal', tableBody.innerHTML); }
+    if(localStorage.getItem('untisAppTable')) { tableBody.innerHTML = localStorage.getItem('untisAppTable'); }
+    if(localStorage.getItem('untisAppTitle')) { mainTitle.innerHTML = localStorage.getItem('untisAppTitle'); }
+    if(localStorage.getItem('untisAppNotes')) { notesArea.value = localStorage.getItem('untisAppNotes'); }
     
-    const savedTheme = localStorage.getItem('proAppTheme') || 'dark';
+    const savedTheme = localStorage.getItem('untisAppTheme') || 'dark';
     document.body.setAttribute('data-theme', savedTheme);
     themeSelect.value = savedTheme;
 
@@ -59,18 +41,18 @@ window.onload = function() {
     setupDragAndDrop(); 
 };
 
-function saveTitle() { localStorage.setItem('proAppTitle', mainTitle.innerHTML); }
+function saveTitle() { localStorage.setItem('untisAppTitle', mainTitle.innerHTML); }
 function saveData() { 
-    localStorage.setItem('proAppTable', tableBody.innerHTML);
+    localStorage.setItem('untisAppTable', tableBody.innerHTML);
     setupDragAndDrop(); 
 }
-function saveNotes() { localStorage.setItem('proAppNotes', notesArea.value); }
+function saveNotes() { localStorage.setItem('untisAppNotes', notesArea.value); }
 
 function changeTheme() {
     const selectedTheme = themeSelect.value;
     document.body.setAttribute('data-theme', selectedTheme);
-    localStorage.setItem('proAppTheme', selectedTheme);
-    showToast('تم تغيير المظهر بنجاح 🎨');
+    localStorage.setItem('untisAppTheme', selectedTheme);
+    showToast('تم تغيير المظهر 🎨');
 }
 
 function changeColor(btn) {
@@ -86,12 +68,11 @@ function removeCard(btn) {
     let td = btn.closest('td');
     let colClass = Array.from(td.classList).find(c => c.startsWith('col-')) || '';
     let todayClass = td.classList.contains('today-col') ? ' today-col' : '';
-    let activeDayClass = td.classList.contains('active-day') ? ' active-day' : '';
     
-    td.className = `${colClass} ${todayClass} ${activeDayClass} drop-zone`;
+    td.className = `${colClass} ${todayClass} drop-zone`;
     td.innerHTML = `<div class="empty-slot" onclick="addCard(this)"></div>`;
     saveData();
-    showToast('تم حذف المادة 🗑️');
+    showToast('تم الحذف 🗑️');
 }
 
 function addCard(slot) {
@@ -102,11 +83,11 @@ function addCard(slot) {
                 <button class="color-btn" onclick="changeColor(this)">🎨</button>
                 <button class="delete-btn" onclick="removeCard(this)">🗑️</button>
             </div>
-            <div contenteditable="true" oninput="saveData()"><div class="class-title">مادة جديدة</div><div class="class-info">القاعة/المدرس</div></div>
+            <div contenteditable="true" oninput="saveData()"><div class="class-title">مادة</div><div class="class-info">قاعة</div></div>
         </div>
     `;
     saveData();
-    showToast('تمت إضافة مادة جديدة ✨');
+    showToast('تمت الإضافة ✨');
 }
 
 function addTimeRow(position) {
@@ -121,9 +102,9 @@ function addTimeRow(position) {
     `;
     if (position === 'top') { tableBody.insertBefore(tr, tableBody.firstChild); } 
     else { tableBody.appendChild(tr); }
-    highlightToday(); // لإعادة تفعيل العمود النشط على الصف الجديد
+    highlightToday();
     saveData();
-    showToast('تمت إضافة وقت جديد ⏰');
+    showToast('تمت إضافة وقت ⏰');
 }
 
 function exportToImage() {
@@ -136,28 +117,28 @@ function exportToImage() {
 
     html2canvas(captureArea, { backgroundColor: bgColor, scale: 2, useCORS: true }).then(canvas => {
         let link = document.createElement('a');
-        link.download = 'جدول_الجامعة_Pro.png';
+        link.download = 'جدول_الجامعة_Untis.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
         btn.innerHTML = originalText;
-        showToast('تم حفظ الصورة بنجاح! 📸');
+        showToast('تم حفظ الصورة 📸');
     }).catch(err => {
-        alert("حدث خطأ في التصوير.");
+        alert("حدث خطأ.");
         btn.innerHTML = originalText;
     });
 }
 
 function clearData() {
-    if(confirm('هل أنت متأكد من مسح كل التعديلات وإعادة الجدول الأصلي؟')) {
-        tableBody.innerHTML = localStorage.getItem('proAppOriginal');
+    if(confirm('متأكد من مسح كل التعديلات؟')) {
+        tableBody.innerHTML = localStorage.getItem('untisAppOriginal');
         notesArea.value = '';
-        localStorage.setItem('proAppNotes', '');
+        localStorage.setItem('untisAppNotes', '');
         saveData();
         location.reload();
     }
 }
 
-// ميزة السحب والإفلات
+// السحب والإفلات (متوافق مع الهواتف عبر مكتبة خارجية)
 let draggedCard = null;
 let sourceZone = null;
 
@@ -205,7 +186,7 @@ function setupDragAndDrop() {
                     this.appendChild(draggedCard); 
                 }
                 saveData();
-                showToast('تم نقل المادة بنجاح 🔄');
+                showToast('تم النقل 🔄');
             }
         });
     });
